@@ -1,5 +1,5 @@
 import os
-from config import TEST_MODE_CONFIG
+from config import TEST_MODE_CONFIG, PORD_MODE_CONFIG
 from load import load
 
 def main(
@@ -8,8 +8,7 @@ def main(
     if (test_mode):
         config = TEST_MODE_CONFIG
     else:
-        # prod config
-        pass
+        config = PORD_MODE_CONFIG
 
     transactions = load(config)
     

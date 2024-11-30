@@ -5,3 +5,4 @@ class GlobalConfig:
     data_path: str
 
 TEST_MODE_CONFIG = GlobalConfig("test_data")
+PORD_MODE_CONFIG = GlobalConfig("data")
