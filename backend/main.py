@@ -11,6 +11,9 @@ def main(
         config = PORD_MODE_CONFIG
 
     transactions = load(config)
+
+    process_gain
+    process_open
     
 
 if __name__ == "__main__":
