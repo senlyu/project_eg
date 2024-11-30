@@ -1,0 +1,1 @@
+MODE=test pipenv run python3 backend/main.py
