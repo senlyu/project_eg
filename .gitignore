@@ -1,4 +1,7 @@
 /data/*
 log.txt
-/test_data/*
-!/test_data/*/eg_standard_test.csv
+/test_data/**
+!/test_data/robinhood/
+!/test_data/merrill/
+!/test_data/fidelity/
+!/test_data/**/eg_standard*.csv
