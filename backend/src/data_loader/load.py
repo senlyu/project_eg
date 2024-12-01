@@ -3,12 +3,14 @@ from typing import List
 
 from src.data_loader.eg_standard_csv_reader import EGStandardCSVReader
 from src.data_loader.robinhood_csv_reader import RobinhoodCSVReader
+from src.data_loader.fidelity_csv_reader import FidelityCSVReader
 from src.config import GlobalConfig
 from src.logging import Logging
 
 CURRENT_SUPPORT_SOURCE = { 
     'eg_standard': EGStandardCSVReader, 
     'robinhood': RobinhoodCSVReader, 
+    'fidelity': FidelityCSVReader,
 }
 
 def load_folder(
@@ -55,7 +57,7 @@ def load(
                 continue
             new_transactions = load_csv(source, os.path.join(source_path, file), file)
             dedup_transactions = dedupTransactions(transactions[source], new_transactions)
-            sorted_transactions = sorted(dedup_transactions, key=lambda x: x.date)
+            sorted_transactions = sorted(dedup_transactions)
             transactions[source] = sorted_transactions
 
     return transactions

@@ -8,7 +8,7 @@ from src.core_data_process.transaction import Transcation
 from src.logging import Logging
 from src.data_loader.csv_reader import CSVReader
 
-class RobinhoodCSVReader(CSVReader):
+class MerrillCSVReader(CSVReader):
 
     def load(self) -> List:
         Logging.log(f"robinhood CSV reader start to read {self.file_path}")

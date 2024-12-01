@@ -52,9 +52,4 @@ class Transcation:
     def __lt__(self, other):
         buy_first = 0 if self.action == TransactionActionEnum.BTO else 1
         other_buy_first = 0 if other.action == TransactionActionEnum.BTO else 1
-        if self.date < other.date:
-            return True
-        else:
-            if buy_first < other_buy_first:
-                return True
-        return False
+        return self.date < other.date if self.date != other.date else buy_first < other_buy_first
