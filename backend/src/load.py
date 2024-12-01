@@ -1,7 +1,8 @@
 import os
-from csv_reader import CSVReader, RobinhoodCSVReader
-from config import GlobalConfig
+from src.csv_reader import CSVReader, RobinhoodCSVReader
+from src.config import GlobalConfig
 from typing import List
+from src.logging import Logging
 
 CURRENT_SUPPORT_SOURCE = { 'robinhood': RobinhoodCSVReader }
 
@@ -9,7 +10,7 @@ def load_folder(
     path: str,
 ) -> List[str]: 
     if os.path.exists(path):
-        print(f"start to load {path}")
+        Logging.log(f"start to load {path}")
     else:
         raise Exception(f"{path} not exist.")
     
@@ -28,12 +29,12 @@ def load(
     root_path = config.data_path
 
     source_folders = load_folder(root_path)
-    print("start to load file from source folders:", source_folders)
+    Logging.log("start to load file from source folders:", source_folders)
 
     transactions = {}
     for source in source_folders:
         if (source not in CURRENT_SUPPORT_SOURCE):
-            print(f"not supported source: {source}")
+            Logging.log(f"not supported source: {source}")
             continue
 
         source_path = os.path.join(root_path, source)

@@ -1,4 +1,5 @@
-from .transaction import Transcation
+from typing import List
+from src.transaction import Transcation
 
 class GainRecord:
     def __init__(
@@ -17,8 +18,8 @@ class GainRecord:
 
     @staticmethod
     def cal_gain(processing_gains, close_transaction):
-        revenue = close_transaction.price * close_transaction * volumn
-        
+        revenue = close_transaction.price * close_transaction.volumn
+
         cost = 0
         for r in processing_gains:
             price = r.open_transaction.price

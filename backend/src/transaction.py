@@ -1,4 +1,4 @@
-from enums import TransactionActionEnum, TransactionAssetsEnum, TransactionOptionTypeEnum
+from src.enums import TransactionActionEnum, TransactionAssetsEnum, TransactionOptionTypeEnum
 from datetime import datetime
 
 class Transcation:
@@ -12,7 +12,7 @@ class Transcation:
         is_option: bool = False,
         option_date = None,
         option_type: TransactionOptionTypeEnum = None,
-        strike_price: int = None,
+        strike_price: float = None,
     ):
         self.date = date
         self.symbol = symbol
@@ -45,6 +45,6 @@ class Transcation:
     ):
         if is_option:
             parsed_date = datetime.strftime(option_date, "%y%m%d")
-            return symbol + date + option_type.value + str(strike_price * 1000).zfill(8)
+            return symbol + parsed_date + option_type.value + str(int(strike_price * 1000)).zfill(8)
         else:
             return symbol

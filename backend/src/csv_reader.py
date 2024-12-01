@@ -2,25 +2,26 @@ import pandas as pd
 
 from typing import List
 from datetime import datetime
-from enums import TransactionActionEnum, TransactionAssetsEnum, TransactionOptionTypeEnum
-from transaction import Transcation
+from src.enums import TransactionActionEnum, TransactionAssetsEnum, TransactionOptionTypeEnum
+from src.transaction import Transcation
+from src.logging import Logging
 
 class CSVReader:
     def __init__(
         self,
         file_path: str,
     ) -> None:
-        print("cvs reader get path: " + file_path)
+        Logging.log("cvs reader get path: " + file_path)
         self.file_path = file_path
 
 
 class RobinhoodCSVReader(CSVReader):
 
     def load(self) -> List:
-        print(f"robinhood CSV reader start to read {self.file_path}")
+        Logging.log(f"robinhood CSV reader start to read {self.file_path}")
         df = pd.read_csv(self.file_path)
         filtered = df.loc[df["Trans Code"].isin(["BTO","STC","Buy","Sell"])]
-        print(f"load from {self.file_path}: {len(filtered)} rows")
+        Logging.log(f"load from {self.file_path}: {len(filtered)} rows")
 
         total = []
         for index, row in filtered.iterrows():
@@ -38,8 +39,8 @@ class RobinhoodCSVReader(CSVReader):
                     (option_date, option_type, strike_price) = (None, None, None)
                 
             except Exception as e:
-                print(e)
-                print("error in process row: " + row)
+                Logging.log(e)
+                Logging.log("error in process row: " + row)
 
             t = Transcation(date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
             total.append(t)
@@ -78,6 +79,6 @@ class RobinhoodCSVReader(CSVReader):
         items = desc.split(' ')
         option_date = datetime.strptime(items[1], "%m/%d/%Y")
         option_type = RobinhoodCSVReader.get_option_type(items[2])
-        strike_price = items[3][1:] # remove $
+        strike_price = round(float(items[3][1:]), 2) # remove $
         return option_date, option_type, strike_price
 

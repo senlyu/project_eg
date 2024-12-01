@@ -1,1 +1,1 @@
-MODE=test pipenv run python3 backend/main.py
+PIPENV_VERBOSITY=-1 MODE=prod pipenv run python3 backend/main.py

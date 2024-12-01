@@ -1,4 +1,4 @@
-from .transaction import Transcation
+from src.transaction import Transcation
 
 class OpenRecord:
     def __init__(
