@@ -1,4 +1,4 @@
-/data
+/data/*
 log.txt
-/test_data
-!/test_data/robinhood/eg_standard_robinhood_test.csv
+/test_data/*
+!/test_data/*/eg_standard*.csv
