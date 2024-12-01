@@ -29,8 +29,8 @@ class GainRecordsBank:
         self.by_quarter[gain_record.tax_quarter] = self.by_quarter.get(gain_record.tax_quarter, []) + [gain_record]
         self.by_ticker[gain_record.close_transaction.ticker] = self.by_ticker.get(gain_record.close_transaction.ticker, []) + [gain_record]
 
-    def __str__(self):
-        return f"GainRecordsBank(all={[x.__str__() for x in self.all]})"
+    def __repr__(self):
+        return f"GainRecordsBank(all={self.all})"
 
     def logging(self):
         Logging.log("-" * 10 + " gain records bank" + "-" * 10)

@@ -30,7 +30,7 @@ class Transcation:
             is_option, option_date, symbol, option_type, strike_price
         )
 
-    def __str__(self):
+    def __repr__(self):
         return f"Transcation(source={self.source}, date={self.date}, symbol={self.symbol}, action={self.action}, volumn={self.volumn}, price={self.price}, is_option={self.is_option}, option_type={self.option_type}, strike_price={self.strike_price}, asset_type={self.asset_type}, ticker={self.ticker})"
 
     @staticmethod

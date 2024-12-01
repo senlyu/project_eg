@@ -3,7 +3,6 @@ from datetime import datetime
 from src.config import TEST_MODE_CONFIG, PORD_MODE_CONFIG
 from src.data_loader.load import load
 from src.core_data_process.process_transactions import ProcessTransactions
-from src.core_data_process.process_gains import ProcessGains
 from src.core_data_process.gain_records_bank import GainRecordsBank
 from src.core_data_process.open_position_bank import OpenPositionBank
 from src.core_data_process.close_position_bank import ClosePositionBank
@@ -32,7 +31,8 @@ def main(
     Logging.log(open_position_bank)
     Logging.log(remaining_position_bank)
 
-    (yearly_estimated_gain_all, quarterly_estimated_gain_all) = ProcessGains().main(gain_records_bank)
+    yearly_estimated_gain_all = gain_records_bank.by_year
+    quarterly_estimated_gain_all = gain_records_bank.by_quarter
     Logging.log(yearly_estimated_gain_all)
     Logging.log(quarterly_estimated_gain_all)
             

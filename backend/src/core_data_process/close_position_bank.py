@@ -29,8 +29,8 @@ class ClosePositionBank:
             del self.by_ticker[close_record.close_transaction.ticker]
 
 
-    def __str__(self):
-        return f"ClosePositionBank(all={[x.__str__() for x in self.all]})"
+    def __repr__(self):
+        return f"ClosePositionBank(all={self.all})"
 
     def logging(self):
         Logging.log("-" * 10 + " close position bank" + "-" * 10)

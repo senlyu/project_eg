@@ -27,8 +27,8 @@ class OpenPositionBank:
         if self.by_ticker[open_record.open_transaction.ticker] == []:
             del self.by_ticker[open_record.open_transaction.ticker]
 
-    def __str__(self):
-        return f"OpenPositionBank(all={[x.__str__() for x in self.all]})"
+    def __repr__(self):
+        return f"OpenPositionBank({self.all})"
 
     def logging(self):
         Logging.log("-" * 10 + " open position bank" + "-" * 10)
