@@ -14,7 +14,8 @@ class GainRecord:
         self.volumn = close_transaction.volumn
         self.price = close_transaction.price
         self.gain = GainRecord.cal_gain(processing_gains, close_transaction)
-
+        self.tax_year = GainRecord.get_tax_year(close_transaction)
+        self.tax_quarter = GainRecord.get_tax_quarter(close_transaction)
 
     @staticmethod
     def cal_gain(processing_gains, close_transaction):
@@ -27,3 +28,15 @@ class GainRecord:
             cost += price * volumn
         
         return revenue - cost
+
+    @staticmethod
+    def get_tax_year(close_transaction):
+        return close_transaction.date.year
+
+    @staticmethod
+    def get_tax_quarter(close_transaction):
+        year = close_transaction.date.year
+        quarter = (close_transaction.date.month - 1) // 3 + 1
+        return str(year) + "Q" + str(quarter)
+
+
