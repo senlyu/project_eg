@@ -50,20 +50,24 @@ def load(
         if (source == SourceEnum.NOT_SUPPORT):
             Logging.log(f"not supported source: {source_folder}")
             continue
-
-        Logging.log(f"start to read source: {source_folder}")
-        source_path = os.path.join(root_path, source_folder)
-        csv_files = load_folder(source_path)
-        transactions[source] = []
-        for file in csv_files:
-            if not file.endswith(".csv"):
-                continue
-            new_transactions = load_csv(source, os.path.join(source_path, file), file)
-            dedup_transactions = dedupTransactions(transactions[source], new_transactions)
-            sorted_transactions = sorted(dedup_transactions)
-            transactions[source] = sorted_transactions
+        transactions[source] = load_source_folders(source_folder)
 
     return transactions
+
+def load_source_folders(source_folder):
+    source = get_source_by_name(source_folder)
+    Logging.log(f"start to read source: {source_folder}")
+    source_path = os.path.join(root_path, source_folder)
+    csv_files = load_folder(source_path)
+    res = []
+    for file in csv_files:
+        if not file.endswith(".csv"):
+            continue
+        new_transactions = load_csv(source, os.path.join(source_path, file), file)
+        dedup_transactions = dedupTransactions(res, new_transactions)
+        sorted_transactions = sorted(dedup_transactions)
+        res = sorted_transactions
+    return res
 
 def dedupTransactions(
     original_trans: List,
