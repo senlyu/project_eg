@@ -39,4 +39,5 @@ class GainRecord:
         quarter = (close_transaction.date.month - 1) // 3 + 1
         return str(year) + "Q" + str(quarter)
 
-
+    def __str__(self):
+        return f"GainRecord(processing_gains={','.join([x.__str__() for x in self.processing_gains])}, close_transaction={self.close_transaction}), gain={self.gain}, tax_year={self.tax_year}, tax_quarter={self.tax_quarter}"

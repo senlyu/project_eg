@@ -46,15 +46,6 @@ class Logging:
             print(time + ": ", *args, **kwargs)
 
     @staticmethod
-    def logging_gain_records(gain_records_all):
-        Logging.log("-" * 10 + " gain records " + "-" * 10)
-        for source, target in gain_records_all.items():
-            for symbal, gs in target.items():
-                for g in gs:
-                    Logging.log(source, symbal, g.gain)
-        Logging.log("-" * 10 + " gain records finished" + "-" * 10)
-
-    @staticmethod
     def logging_open_records(open_position_all):
         Logging.log("-" * 10 + " open records " + "-" * 10)
         for source, target in open_position_all.items():

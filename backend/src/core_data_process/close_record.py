@@ -8,3 +8,6 @@ class CloseRecord:
     ):
         self.close_transaction = close_transaction
         self.remain_volumn = remain_volumn
+
+    def __str__(self):
+        return f"CloseRecord(close_transaction={self.close_transaction}, remain_volumn={self.remain_volumn})"

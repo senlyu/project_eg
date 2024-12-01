@@ -8,3 +8,6 @@ class OpenRecord:
     ):
         self.open_transaction = open_transaction
         self.remain_volumn = remain_volumn
+
+    def __str__(self):
+        return f"OpenRecord(open_transaction={self.open_transaction}, remain_volumn={self.remain_volumn})"
