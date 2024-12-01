@@ -11,25 +11,23 @@ from src.data_loader.csv_reader import CSVReader
 class MerrillCSVReader(CSVReader):
 
     def load(self) -> List:
-        Logging.log(f"robinhood CSV reader start to read {self.file_path}")
+        Logging.log(f"merrill CSV reader start to read {self.file_path}")
         df = pd.read_csv(self.file_path)
-        filtered = df.loc[df["Trans Code"].isin(["BTO","STC","Buy","Sell"])]
+        filtered = df.loc[df["Description 1 "].isin(["Sale ","Purchase "])]
         Logging.log(f"load from {self.file_path}: {len(filtered)} rows")
 
         total = []
-        for _,row in filtered.iterrows():
+        for _, row in filtered.iterrows():
             try:
-                date = datetime.strptime(row['Activity Date'], "%m/%d/%Y")
-                symbol = row['Instrument']
-                action = RobinhoodCSVReader.get_action(row['Trans Code'])
-                volumn = float(row['Quantity'])
-                price = float(row['Price'][1:]) # remove $
+                date = datetime.strptime(row['Trade Date'], "%m/%d/%Y")
+                symbol = row['Symbol/CUSIP #']
+                action = MerrillCSVReader.get_action(row['Description 1 '])
+                volumn = float(abs(row['Quantity']))
+                price = float(row['Price ($)'])
 
-                is_option = RobinhoodCSVReader.get_is_option(row['Description'])
-                if is_option:
-                    (option_date, option_type, strike_price) = RobinhoodCSVReader.get_option_info(row['Description'])
-                else:
-                    (option_date, option_type, strike_price) = (None, None, None)
+                is_option = MerrillCSVReader.get_is_option(row['Description 2'])
+
+                (option_date, option_type, strike_price) = (None, None, None)
                 
             except Exception as e:
                 Logging.log(e)
@@ -45,33 +43,11 @@ class MerrillCSVReader(CSVReader):
 
     @staticmethod
     def get_action(code):
-        if code == "BTO":
+        if code == "Purchase ":
             return TransactionActionEnum.BTO
-        if code == "Buy":
-            return TransactionActionEnum.BTO
-        if code == "STC":
+        if code == "Sale ":
             return TransactionActionEnum.STC
-        if code == "Sell":
-            return TransactionActionEnum.STC
-
-    @staticmethod
-    def get_option_type(desc):
-        if desc == "Call":
-            return TransactionOptionTypeEnum.CALL
-        raise ValueError("Not Support This Option Type: " + desc)
 
     @staticmethod
     def get_is_option(desc):
-        try:
-            RobinhoodCSVReader.get_option_info(desc)
-            return True
-        except Exception as _:
-            return False
-
-    @staticmethod
-    def get_option_info(desc):
-        items = desc.split(' ')
-        option_date = datetime.strptime(items[1], "%m/%d/%Y")
-        option_type = RobinhoodCSVReader.get_option_type(items[2])
-        strike_price = round(float(items[3][1:]), 2) # remove $
-        return option_date, option_type, strike_price
+        return False

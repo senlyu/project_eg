@@ -16,7 +16,7 @@ class FidelityCSVReader(CSVReader):
         Logging.log(f"load from {self.file_path}: {len(df)} rows")
 
         total = []
-        for _,row in df.iterrows():
+        for _, row in df.iterrows():
             try:
                 date = datetime.strptime(row['Run Date'], "%m/%d/%Y")
                 symbol = row['Symbol']

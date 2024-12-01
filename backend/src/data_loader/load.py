@@ -4,6 +4,7 @@ from typing import List
 from src.data_loader.eg_standard_csv_reader import EGStandardCSVReader
 from src.data_loader.robinhood_csv_reader import RobinhoodCSVReader
 from src.data_loader.fidelity_csv_reader import FidelityCSVReader
+from src.data_loader.merrill_csv_reader import MerrillCSVReader
 from src.config import GlobalConfig
 from src.logging import Logging
 
@@ -11,6 +12,7 @@ CURRENT_SUPPORT_SOURCE = {
     'eg_standard': EGStandardCSVReader, 
     'robinhood': RobinhoodCSVReader, 
     'fidelity': FidelityCSVReader,
+    'merrill': MerrillCSVReader,
 }
 
 def load_folder(
