@@ -1,5 +1,5 @@
 from typing import List
-from src.transaction import Transcation
+from src.core_data_process.transaction import Transcation
 
 class GainRecord:
     def __init__(

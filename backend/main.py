@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from src.config import TEST_MODE_CONFIG, PORD_MODE_CONFIG
-from src.load import load
+from src.data_loader.load import load
 from src.core_data_process.process_transactions import ProcessTransactions
 from src.logging import Logging
 

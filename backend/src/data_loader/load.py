@@ -1,7 +1,8 @@
 import os
-from src.csv_reader import CSVReader, RobinhoodCSVReader
-from src.config import GlobalConfig
 from typing import List
+
+from src.data_loader.csv_reader import CSVReader, RobinhoodCSVReader
+from src.config import GlobalConfig
 from src.logging import Logging
 
 CURRENT_SUPPORT_SOURCE = { 'robinhood': RobinhoodCSVReader }
@@ -41,9 +42,26 @@ def load(
         csv_files = load_folder(source_path)
         transactions[source] = []
         for file in csv_files:
-            transactions[source] = transactions[source] + load_csv(source, os.path.join(source_path, file))
+            new_transactions = load_csv(source, os.path.join(source_path, file))
+            dedup_transactions = dedupTransactions(transactions[source], new_transactions)
+            sorted_transactions = sorted(dedup_transactions, key=lambda x: x.date)
+            transactions[source] = sorted_transactions
 
     return transactions
+
+def dedupTransactions(
+    original_trans: List,
+    new_trans: List,
+):
+    dates = set()
+    for t in original_trans:
+        dates.add(t.date)
+
+    for new_t in new_trans:
+        if new_t.date not in dates:
+            original_trans.append(new_t)
+
+    return original_trans
 
 
 

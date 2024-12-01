@@ -3,7 +3,7 @@ import pandas as pd
 from typing import List
 from datetime import datetime
 from src.enums import TransactionActionEnum, TransactionAssetsEnum, TransactionOptionTypeEnum
-from src.transaction import Transcation
+from src.core_data_process.transaction import Transcation
 from src.logging import Logging
 
 class CSVReader:
@@ -45,7 +45,7 @@ class RobinhoodCSVReader(CSVReader):
             t = Transcation(date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
             total.append(t)
 
-            sorted_total = sorted(total, key=lambda x: x.date)
+        sorted_total = sorted(total, key=lambda x: x.date)
             
         return sorted_total
 

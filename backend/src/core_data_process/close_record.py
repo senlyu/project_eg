@@ -1,4 +1,4 @@
-from src.transaction import Transcation
+from src.core_data_process.transaction import Transcation
 
 class CloseRecord:
     def __init__(
