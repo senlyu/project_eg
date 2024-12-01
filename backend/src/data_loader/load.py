@@ -50,11 +50,11 @@ def load(
         if (source == SourceEnum.NOT_SUPPORT):
             Logging.log(f"not supported source: {source_folder}")
             continue
-        transactions[source] = load_source_folders(source_folder)
+        transactions[source] = load_source_folders(root_path, source_folder)
 
     return transactions
 
-def load_source_folders(source_folder):
+def load_source_folders(root_path, source_folder):
     source = get_source_by_name(source_folder)
     Logging.log(f"start to read source: {source_folder}")
     source_path = os.path.join(root_path, source_folder)

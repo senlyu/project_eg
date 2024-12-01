@@ -20,7 +20,7 @@ def main(
     open_position_all = {}
     remaining_position_all = {}
     for key, value in transactions.items():
-        ( gain_records, open_position, remaining_position ) = ProcessTransactions.main(value, datetime.now())
+        ( gain_records, open_position, remaining_position ) = ProcessTransactions().main(value, datetime.now())
         gain_records_all[key] = gain_records
         open_position_all[key] = open_position
         remaining_position_all[key] = remaining_position

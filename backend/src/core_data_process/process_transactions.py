@@ -7,36 +7,54 @@ from src.core_data_process.util import add_into_dict_as_list_item
 from src.enums import TransactionActionEnum
 
 class ProcessTransactions:
-    @staticmethod
+    def __init__(self):
+        self.gain_records_all = {}
+        self.open_position_all = {}
+        self.extra_close_position_all = {}
+    
     def main(
+        self,
         transactions: List,
         end_date,
     ):
-        gain_records_all = {}
-
-        open_position_all = {}
-
-        remaining_position_all = {}
         for t in transactions:
             if t.date > end_date:
-                break
+                continue
+            
+            self.process_one_transaction(t, end_date)
 
-            if t.action == TransactionActionEnum.BTO:
-                open_position_all = add_into_dict_as_list_item(open_position_all, t.ticker, OpenRecord(t, t.volumn))
-            elif t.action == TransactionActionEnum.STC:
-                if t.ticker not in open_position_all:
-                    remaining_position_all = add_into_dict_as_list_item(remaining_position_all, t.ticker, CloseRecord(t, t.volumn))
-                else:
-                    # process open positions to close
-                    (remaining_open_postions, remaining_close_postion, gain_record) = ProcessTransactions.process_open_positioins_to_close(open_position_all[t.ticker], t)
+        return self.gain_records_all, self.open_position_all, self.extra_close_position_all
 
-                    if gain_record is not None:
-                        gain_records_all = add_into_dict_as_list_item(gain_records_all, t.ticker, gain_record)
-                    open_position_all[t.ticker] = remaining_open_postions
-                    if remaining_close_postion is not None:
-                        remaining_position_all = add_into_dict_as_list_item(remaining_position_all, t.ticker, remaining_close_postion)
+    def process_one_transaction(self, t, end_date):
+        
+        if t.action == TransactionActionEnum.BTO:
+            self.add_transaction_to_open_records(t)
+        elif t.action == TransactionActionEnum.STC:
+            if t.ticker not in self.open_position_all:
+                self.add_transaction_to_extra_close_postions(t)
+            else:
+                # process open positions to close
+                (remaining_open_postions, remaining_close_postion, gain_record) = ProcessTransactions.process_open_positioins_to_close(self.open_position_all[t.ticker], t)
 
-        return gain_records_all, open_position_all, remaining_position_all
+                self.add_transaction_to_gain_records(t, gain_record)
+                self.open_position_all[t.ticker] = remaining_open_postions
+                self.add_transaction_to_extra_close_postions_half_closed(t, remaining_close_postion)
+
+
+    def add_transaction_to_open_records(self, t):
+        self.open_position_all = add_into_dict_as_list_item(self.open_position_all, t.ticker, OpenRecord(t, t.volumn))
+
+    def add_transaction_to_extra_close_postions(self, t):
+        self.extra_close_position_all = add_into_dict_as_list_item(self.extra_close_position_all, t.ticker, CloseRecord(t, t.volumn))
+
+    def add_transaction_to_gain_records(self, t, gain_record):
+        if gain_record is not None:
+            self.gain_records_all = add_into_dict_as_list_item(self.gain_records_all, t.ticker, gain_record)
+
+    def add_transaction_to_extra_close_postions_half_closed(self, t, remaining_close_postion):
+        if remaining_close_postion is not None:
+            self.extra_close_position_all = add_into_dict_as_list_item(self.extra_close_position_all, t.ticker, remaining_close_postion)
+
 
     @staticmethod
     def process_open_positioins_to_close(open_records, close_transaction):
