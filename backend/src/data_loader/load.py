@@ -60,14 +60,25 @@ def load_source_folders(root_path, source_folder):
     source_path = os.path.join(root_path, source_folder)
     csv_files = load_folder(source_path)
     res = []
+
+    # first load eg_standard
+    for file in csv_files:
+        if file.startswith("eg_standard") and file.endswith(".csv"):
+            res = process_load(source, source_path, file, res)
+
     for file in csv_files:
         if not file.endswith(".csv"):
             continue
-        new_transactions = load_csv(source, os.path.join(source_path, file), file)
-        dedup_transactions = dedupTransactions(res, new_transactions)
-        sorted_transactions = sorted(dedup_transactions)
-        res = sorted_transactions
+        if file.startswith("eg_standard"):
+            continue
+        res = process_load(source, source_path, file, res)
     return res
+
+def process_load(source, source_path, file, res):
+    new_transactions = load_csv(source, os.path.join(source_path, file), file)
+    dedup_transactions = dedupTransactions(res, new_transactions)
+    sorted_transactions = sorted(dedup_transactions)
+    return sorted_transactions
 
 def dedupTransactions(
     original_trans: List,
