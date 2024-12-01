@@ -5,6 +5,7 @@ from src.data_loader.load import load
 from src.core_data_process.process_transactions import ProcessTransactions
 from src.core_data_process.process_gains import ProcessGains
 from src.core_data_process.gain_records_bank import GainRecordsBank
+from src.core_data_process.open_position_bank import OpenPositionBank
 from src.logging import Logging
 
 def main(
@@ -18,16 +19,16 @@ def main(
     transactions = load(config)
 
     gain_records_bank = GainRecordsBank()
-    open_position_all = {}
+    open_position_bank = OpenPositionBank()
     remaining_position_all = {}
     for key, value in transactions.items():
         ( gain_records, open_position, remaining_position ) = ProcessTransactions().main(value, datetime.now())
         gain_records_bank.merge(gain_records)
-        open_position_all[key] = open_position
+        open_position_bank.merge(open_position)
         remaining_position_all[key] = remaining_position
 
     Logging.log(gain_records_bank)
-    Logging.logging_open_records(open_position_all)
+    Logging.log(open_position_bank)
     Logging.logging_close_records(remaining_position_all)
 
     (yearly_estimated_gain_all, quarterly_estimated_gain_all) = ProcessGains().main(gain_records_bank)

@@ -5,12 +5,13 @@ from src.core_data_process.close_record import CloseRecord
 from src.core_data_process.gain_record import GainRecord
 from src.core_data_process.util import add_into_dict_as_list_item
 from src.core_data_process.gain_records_bank import GainRecordsBank
+from src.core_data_process.open_position_bank import OpenPositionBank
 from src.enums import TransactionActionEnum
 
 class ProcessTransactions:
     def __init__(self):
         self.gain_records_all = GainRecordsBank()
-        self.open_position_all = {}
+        self.open_position_all = OpenPositionBank()
         self.extra_close_position_all = {}
     
     def main(
@@ -31,19 +32,24 @@ class ProcessTransactions:
         if t.action == TransactionActionEnum.BTO:
             self.add_transaction_to_open_records(t)
         elif t.action == TransactionActionEnum.STC:
-            if t.ticker not in self.open_position_all:
+            if t.ticker not in self.open_position_all.get_all_tickers():
                 self.add_transaction_to_extra_close_postions(t)
             else:
                 # process open positions to close
-                (remaining_open_postions, remaining_close_postion, gain_record) = ProcessTransactions.process_open_positioins_to_close(self.open_position_all[t.ticker], t)
+                (remaining_open_postions, remaining_close_postion, gain_record) = ProcessTransactions.process_open_positioins_to_close(self.open_position_all.by_ticker[t.ticker], t)
 
                 self.add_transaction_to_gain_records(t, gain_record)
-                self.open_position_all[t.ticker] = remaining_open_postions
+
+                for open_position in self.open_position_all.by_ticker[t.ticker]:
+                    self.open_position_all.remove_open_record(open_position, t.source)
+                for open_position in remaining_open_postions:
+                    self.open_position_all.add_open_record(open_position, t.source)
+                    
                 self.add_transaction_to_extra_close_postions_half_closed(t, remaining_close_postion)
 
 
     def add_transaction_to_open_records(self, t):
-        self.open_position_all = add_into_dict_as_list_item(self.open_position_all, t.ticker, OpenRecord(t, t.volumn))
+        self.open_position_all.add_open_record(OpenRecord(t, t.volumn), t.source)
 
     def add_transaction_to_extra_close_postions(self, t):
         self.extra_close_position_all = add_into_dict_as_list_item(self.extra_close_position_all, t.ticker, CloseRecord(t, t.volumn))

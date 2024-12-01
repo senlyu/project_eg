@@ -12,7 +12,7 @@ class ProcessGains:
     def main(
         self, gain_records_bank: GainRecordsBank,
     ):
-        for g in gain_records_bank.get_gain_records_all():
+        for g in gain_records_bank.all:
             self.add_gain_record_to_yearly_gain(g)
             self.add_gain_record_to_quarterly_gain(g)
 
