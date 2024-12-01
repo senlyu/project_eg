@@ -18,28 +18,33 @@ class MerrillCSVReader(CSVReader):
 
         total = []
         for _, row in filtered.iterrows():
-            try:
-                date = datetime.strptime(row['Trade Date'], "%m/%d/%Y")
-                symbol = row['Symbol/CUSIP #']
-                action = MerrillCSVReader.get_action(row['Description 1 '])
-                volumn = float(abs(row['Quantity']))
-                price = float(row['Price ($)'])
-
-                is_option = MerrillCSVReader.get_is_option(row['Description 2'])
-
-                (option_date, option_type, strike_price) = (None, None, None)
-                
-            except Exception as e:
-                Logging.log(e)
-                Logging.log("error in process row: ", row)
-                continue
-
-            t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
-            total.append(t)
+            t = MerrillCSVReader.process_one_row(row, source)
+            if t is not None:
+                total.append(t)
 
         sorted_total = sorted(total)
-            
         return sorted_total
+
+    @staticmethod
+    def process_one_row(row, source):
+        try:
+            date = datetime.strptime(row['Trade Date'], "%m/%d/%Y")
+            symbol = row['Symbol/CUSIP #']
+            action = MerrillCSVReader.get_action(row['Description 1 '])
+            volumn = float(abs(row['Quantity']))
+            price = float(row['Price ($)'])
+
+            is_option = MerrillCSVReader.get_is_option(row['Description 2'])
+
+            (option_date, option_type, strike_price) = (None, None, None)
+            
+        except Exception as e:
+            Logging.log(e)
+            Logging.log("error in process row: ", row)
+            return None
+
+        t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
+        return t
 
     @staticmethod
     def get_action(code):

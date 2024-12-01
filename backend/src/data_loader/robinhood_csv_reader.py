@@ -18,30 +18,35 @@ class RobinhoodCSVReader(CSVReader):
 
         total = []
         for _,row in filtered.iterrows():
-            try:
-                date = datetime.strptime(row['Activity Date'], "%m/%d/%Y")
-                symbol = row['Instrument']
-                action = RobinhoodCSVReader.get_action(row['Trans Code'])
-                volumn = float(row['Quantity'])
-                price = float(row['Price'][1:]) # remove $
-
-                is_option = RobinhoodCSVReader.get_is_option(row['Description'])
-                if is_option:
-                    (option_date, option_type, strike_price) = RobinhoodCSVReader.get_option_info(row['Description'])
-                else:
-                    (option_date, option_type, strike_price) = (None, None, None)
-                
-            except Exception as e:
-                Logging.log(e)
-                Logging.log("error in process row: ", row)
-                continue
-
-            t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
-            total.append(t)
+            t = RobinhoodCSVReader.process_one_row(row, source)
+            if t is not None:
+                total.append(t)
 
         sorted_total = sorted(total)
-            
         return sorted_total
+
+    @staticmethod
+    def process_one_row(row, source):
+        try:
+            date = datetime.strptime(row['Activity Date'], "%m/%d/%Y")
+            symbol = row['Instrument']
+            action = RobinhoodCSVReader.get_action(row['Trans Code'])
+            volumn = float(row['Quantity'])
+            price = float(row['Price'][1:]) # remove $
+
+            is_option = RobinhoodCSVReader.get_is_option(row['Description'])
+            if is_option:
+                (option_date, option_type, strike_price) = RobinhoodCSVReader.get_option_info(row['Description'])
+            else:
+                (option_date, option_type, strike_price) = (None, None, None)
+            
+        except Exception as e:
+            Logging.log(e)
+            Logging.log("error in process row: ", row)
+            return None
+
+        t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
+        return t
 
     @staticmethod
     def get_action(code):

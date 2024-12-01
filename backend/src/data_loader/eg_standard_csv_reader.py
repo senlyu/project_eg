@@ -16,33 +16,37 @@ class EGStandardCSVReader(CSVReader):
 
         total = []
         for _, row in df.iterrows():
-            try:
-                date = datetime.strptime(row['Date'], "%m/%d/%Y")
-                symbol = row['Symbol']
-                action = EGStandardCSVReader.get_action(row['Action'])
-                volumn = float(row['Quantity'])
-                price = float(row['Price']) 
-                is_option = EGStandardCSVReader.get_is_option(row['Ticker'], row['Symbol'])
-                if is_option:
-                    option_date = datetime.strptime(row['Option Date'], "%m/%d/%Y")
-                    option_type = EGStandardCSVReader.get_option_type(row['Option Type'])
-                    strike_price = round(float(row['Strike Price']), 2) 
-                else:
-                    option_date = None
-                    option_type = None
-                    strike_price = None
-                
-            except Exception as e:
-                Logging.log(e)
-                Logging.log("error in process row: ", row)
-                continue
-
-            t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
-            total.append(t)
+            t = EGStandardCSVReader.process_one_row(row, source)
+            if t is not None:
+                total.append(t)
 
         sorted_total = sorted(total)
-            
         return sorted_total
+
+    @staticmethod
+    def process_one_row(row, source):
+        try:
+            date = datetime.strptime(row['Date'], "%m/%d/%Y")
+            symbol = row['Symbol']
+            action = EGStandardCSVReader.get_action(row['Action'])
+            volumn = float(row['Quantity'])
+            price = float(row['Price']) 
+            is_option = EGStandardCSVReader.get_is_option(row['Ticker'], row['Symbol'])
+            if is_option:
+                option_date = datetime.strptime(row['Option Date'], "%m/%d/%Y")
+                option_type = EGStandardCSVReader.get_option_type(row['Option Type'])
+                strike_price = round(float(row['Strike Price']), 2) 
+            else:
+                option_date = None
+                option_type = None
+                strike_price = None
+        except Exception as e:
+            Logging.log(e)
+            Logging.log("error in process row: ", row)
+            return None
+        
+        t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
+        return t
 
     @staticmethod
     def get_is_option(ticker, symbol):

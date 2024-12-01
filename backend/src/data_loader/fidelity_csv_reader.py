@@ -17,30 +17,35 @@ class FidelityCSVReader(CSVReader):
 
         total = []
         for _, row in df.iterrows():
-            try:
-                date = datetime.strptime(row['Run Date'], "%m/%d/%Y")
-                symbol = row['Symbol']
-                if not FidelityCSVReader.get_is_stock_option(symbol):
-                    continue
-                action = FidelityCSVReader.get_action(row['Action'])
-                volumn = float(abs(row['Quantity']))
-                price = float(row['Price ($)'])
-
-                is_option = FidelityCSVReader.get_is_option(symbol)
-
-                (option_date, option_type, strike_price) = (None, None, None)
-                
-            except Exception as e:
-                Logging.log(e)
-                Logging.log("error in process row: ", row)
-                continue
-
-            t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
-            total.append(t)
+            t = FidelityCSVReader.process_one_row(row, source)
+            if t is not None:
+                total.append(t)
 
         sorted_total = sorted(total)
-            
         return sorted_total
+
+    @staticmethod
+    def process_one_row(row, source):
+        try:
+            date = datetime.strptime(row['Run Date'], "%m/%d/%Y")
+            symbol = row['Symbol']
+            if not FidelityCSVReader.get_is_stock_option(symbol):
+                return None
+            action = FidelityCSVReader.get_action(row['Action'])
+            volumn = float(abs(row['Quantity']))
+            price = float(row['Price ($)'])
+
+            is_option = FidelityCSVReader.get_is_option(symbol)
+
+            (option_date, option_type, strike_price) = (None, None, None)
+            
+        except Exception as e:
+            Logging.log(e)
+            Logging.log("error in process row: ", row)
+            return None
+
+        t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
+        return t
 
     @staticmethod
     def get_is_stock_option(symbol):
