@@ -5,14 +5,14 @@ from src.data_loader.eg_standard_csv_reader import EGStandardCSVReader
 from src.data_loader.robinhood_csv_reader import RobinhoodCSVReader
 from src.data_loader.fidelity_csv_reader import FidelityCSVReader
 from src.data_loader.merrill_csv_reader import MerrillCSVReader
+from src.enums import get_source_by_name, SourceEnum
 from src.config import GlobalConfig
 from src.logging import Logging
 
-CURRENT_SUPPORT_SOURCE = { 
-    'eg_standard': EGStandardCSVReader, 
-    'robinhood': RobinhoodCSVReader, 
-    'fidelity': FidelityCSVReader,
-    'merrill': MerrillCSVReader,
+CURRENT_SUPPORT_CSR_BY_SOURCE = { 
+    SourceEnum.ROBINHOOD : RobinhoodCSVReader, 
+    SourceEnum.FIDELITY: FidelityCSVReader,
+    SourceEnum.MERRILL: MerrillCSVReader,
 }
 
 def load_folder(
@@ -26,15 +26,15 @@ def load_folder(
     return os.listdir(path)
 
 def load_csv(
-    source: str,
+    source: SourceEnum,
     path: str,
     file: str,
 ):
     if file.startswith("eg_standard"):
-        csv_reader = CURRENT_SUPPORT_SOURCE['eg_standard'](path)
+        csv_reader = EGStandardCSVReader(path)
     else:
-        csv_reader = CURRENT_SUPPORT_SOURCE[source](path)
-    return csv_reader.load()
+        csv_reader = CURRENT_SUPPORT_CSR_BY_SOURCE[source](path)
+    return csv_reader.load(source)
 
 def load(
     config: GlobalConfig,
@@ -45,13 +45,14 @@ def load(
     Logging.log("start to load file from source folders:", source_folders)
 
     transactions = {}
-    for source in source_folders:
-        if (source not in CURRENT_SUPPORT_SOURCE):
-            Logging.log(f"not supported source: {source}")
+    for source_folder in source_folders:
+        source = get_source_by_name(source_folder)
+        if (source == SourceEnum.NOT_SUPPORT):
+            Logging.log(f"not supported source: {source_folder}")
             continue
 
-        Logging.log(f"start to read source: {source}")
-        source_path = os.path.join(root_path, source)
+        Logging.log(f"start to read source: {source_folder}")
+        source_path = os.path.join(root_path, source_folder)
         csv_files = load_folder(source_path)
         transactions[source] = []
         for file in csv_files:

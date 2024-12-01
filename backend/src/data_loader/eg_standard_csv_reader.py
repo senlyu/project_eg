@@ -2,14 +2,14 @@ import pandas as pd
 
 from typing import List
 from datetime import datetime
-from src.enums import TransactionActionEnum, TransactionOptionTypeEnum
+from src.enums import TransactionActionEnum, TransactionOptionTypeEnum, SourceEnum
 from src.core_data_process.transaction import Transcation
 from src.logging import Logging
 from src.data_loader.csv_reader import CSVReader
 
 class EGStandardCSVReader(CSVReader):
 
-    def load(self) -> List:
+    def load(self, source) -> List:
         Logging.log(f"eg_standard CSV reader start to read {self.file_path}")
         df = pd.read_csv(self.file_path)
         Logging.log(f"load from {self.file_path}: {len(df)} rows")
@@ -37,7 +37,7 @@ class EGStandardCSVReader(CSVReader):
                 Logging.log("error in process row: ", row)
                 continue
 
-            t = Transcation(date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
+            t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
             total.append(t)
 
         sorted_total = sorted(total)

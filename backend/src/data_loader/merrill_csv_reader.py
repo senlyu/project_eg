@@ -3,14 +3,14 @@ from datetime import datetime
 
 import pandas as pd
 
-from src.enums import TransactionActionEnum, TransactionOptionTypeEnum
+from src.enums import TransactionActionEnum, TransactionOptionTypeEnum, SourceEnum
 from src.core_data_process.transaction import Transcation
 from src.logging import Logging
 from src.data_loader.csv_reader import CSVReader
 
 class MerrillCSVReader(CSVReader):
 
-    def load(self) -> List:
+    def load(self, source = SourceEnum.MERRILL) -> List:
         Logging.log(f"merrill CSV reader start to read {self.file_path}")
         df = pd.read_csv(self.file_path)
         filtered = df.loc[df["Description 1 "].isin(["Sale ","Purchase "])]
@@ -34,7 +34,7 @@ class MerrillCSVReader(CSVReader):
                 Logging.log("error in process row: ", row)
                 continue
 
-            t = Transcation(date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
+            t = Transcation(source, date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
             total.append(t)
 
         sorted_total = sorted(total)

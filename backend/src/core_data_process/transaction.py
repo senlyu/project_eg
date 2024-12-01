@@ -1,9 +1,10 @@
 from datetime import datetime
-from src.enums import TransactionActionEnum, TransactionAssetsEnum, TransactionOptionTypeEnum
+from src.enums import TransactionActionEnum, TransactionAssetsEnum, TransactionOptionTypeEnum, SourceEnum
 
 class Transcation:
     def __init__(
         self,
+        source: SourceEnum,
         date,
         symbol: str,
         action: TransactionActionEnum,
@@ -14,6 +15,7 @@ class Transcation:
         option_type: TransactionOptionTypeEnum = None,
         strike_price: float = None,
     ):
+        self.source = source
         self.date = date
         self.symbol = symbol
         self.action = action
