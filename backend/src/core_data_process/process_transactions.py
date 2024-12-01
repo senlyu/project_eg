@@ -6,13 +6,14 @@ from src.core_data_process.gain_record import GainRecord
 from src.core_data_process.util import add_into_dict_as_list_item
 from src.core_data_process.gain_records_bank import GainRecordsBank
 from src.core_data_process.open_position_bank import OpenPositionBank
+from src.core_data_process.close_position_bank import ClosePositionBank
 from src.enums import TransactionActionEnum
 
 class ProcessTransactions:
     def __init__(self):
         self.gain_records_all = GainRecordsBank()
         self.open_position_all = OpenPositionBank()
-        self.extra_close_position_all = {}
+        self.extra_close_position_all = ClosePositionBank()
     
     def main(
         self,
@@ -52,7 +53,7 @@ class ProcessTransactions:
         self.open_position_all.add_open_record(OpenRecord(t, t.volumn), t.source)
 
     def add_transaction_to_extra_close_postions(self, t):
-        self.extra_close_position_all = add_into_dict_as_list_item(self.extra_close_position_all, t.ticker, CloseRecord(t, t.volumn))
+        self.extra_close_position_all.add_close_record(CloseRecord(t, t.volumn), t.source)
 
     def add_transaction_to_gain_records(self, t, gain_record):
         if gain_record is not None:
@@ -60,7 +61,7 @@ class ProcessTransactions:
 
     def add_transaction_to_extra_close_postions_half_closed(self, t, remaining_close_postion):
         if remaining_close_postion is not None:
-            self.extra_close_position_all = add_into_dict_as_list_item(self.extra_close_position_all, t.ticker, remaining_close_postion)
+            self.extra_close_position_all.add_close_record(remaining_close_postion, t.source)
 
 
     @staticmethod
