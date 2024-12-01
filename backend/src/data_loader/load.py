@@ -24,8 +24,9 @@ def load_folder(
 def load_csv(
     source: str,
     path: str,
+    file: str,
 ):
-    if source.startswith("eg_standard"):
+    if file.startswith("eg_standard"):
         csv_reader = CURRENT_SUPPORT_SOURCE['eg_standard'](path)
     else:
         csv_reader = CURRENT_SUPPORT_SOURCE[source](path)
@@ -52,7 +53,7 @@ def load(
         for file in csv_files:
             if not file.endswith(".csv"):
                 continue
-            new_transactions = load_csv(source, os.path.join(source_path, file))
+            new_transactions = load_csv(source, os.path.join(source_path, file), file)
             dedup_transactions = dedupTransactions(transactions[source], new_transactions)
             sorted_transactions = sorted(dedup_transactions, key=lambda x: x.date)
             transactions[source] = sorted_transactions

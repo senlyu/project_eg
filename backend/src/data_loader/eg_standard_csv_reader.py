@@ -26,7 +26,7 @@ class EGStandardCSVReader(CSVReader):
                 if is_option:
                     option_date = datetime.strptime(row['Option Date'], "%m/%d/%Y")
                     option_type = EGStandardCSVReader.get_option_type(row['Option Type'])
-                    strike_price = round(float(row['Strike']), 2) 
+                    strike_price = round(float(row['Strike Price']), 2) 
                 else:
                     option_date = None
                     option_type = None
@@ -34,13 +34,13 @@ class EGStandardCSVReader(CSVReader):
                 
             except Exception as e:
                 Logging.log(e)
-                Logging.log("error in process row: " + row)
+                Logging.log("error in process row: ", row)
                 continue
 
             t = Transcation(date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
             total.append(t)
 
-        sorted_total = sorted(total, key=lambda x: x.date)
+        sorted_total = sorted(total)
             
         return sorted_total
 

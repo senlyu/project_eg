@@ -39,7 +39,7 @@ class RobinhoodCSVReader(CSVReader):
             t = Transcation(date, symbol, action, volumn, price, is_option, option_date, option_type, strike_price)
             total.append(t)
 
-        sorted_total = sorted(total, key=lambda x: x.date)
+        sorted_total = sorted(total)
             
         return sorted_total
 

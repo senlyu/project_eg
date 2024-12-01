@@ -48,3 +48,13 @@ class Transcation:
             return symbol + parsed_date + option_type.value + str(int(strike_price * 1000)).zfill(8)
         else:
             return symbol
+
+    def __lt__(self, other):
+        buy_first = 0 if self.action == TransactionActionEnum.BTO else 1
+        other_buy_first = 0 if other.action == TransactionActionEnum.BTO else 1
+        if self.date < other.date:
+            return True
+        else:
+            if buy_first < other_buy_first:
+                return True
+        return False
