@@ -1,4 +1,4 @@
 /data/*
 log.txt
 /test_data/*
-!/test_data/*/eg_standard*.csv
+!/test_data/*/eg_standard_test.csv
