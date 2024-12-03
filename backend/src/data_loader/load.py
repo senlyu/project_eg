@@ -61,6 +61,8 @@ def load_source_folders(root_path, source_folder):
     csv_files = load_folder(source_path)
     res = []
 
+    csv_files = sorted(csv_files)
+
     # first load eg_standard
     for file in csv_files:
         if file.startswith("eg_standard") and file.endswith(".csv"):
