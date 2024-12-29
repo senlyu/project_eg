@@ -37,7 +37,7 @@ class ProcessTransactions:
                 self.add_transaction_to_extra_close_postions(t)
             else:
                 all_open_positions_by_source = self.open_position_all.by_source[source]
-                all_open_positions_by_source_by_ticker = filter(lambda x: x.open_transaction.ticker == t.ticker, all_open_positions_by_source)
+                all_open_positions_by_source_by_ticker = list(filter(lambda x: x.open_transaction.ticker == t.ticker, all_open_positions_by_source))
                 # process open positions to close
                 (remaining_open_postions, remaining_close_postion, gain_record) = ProcessTransactions.process_open_positioins_to_close(all_open_positions_by_source_by_ticker, t)
 
