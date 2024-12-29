@@ -31,7 +31,7 @@ class MerrillCSVReader(CSVReader):
             date = datetime.strptime(row['Trade Date'], "%m/%d/%Y")
             symbol = row['Symbol/CUSIP #']
             action = MerrillCSVReader.get_action(row['Description 1 '])
-            volumn = float(abs(row['Quantity']))
+            volumn = float(abs(int(row['Quantity'])))
             price = float(row['Price ($)'])
 
             is_option = MerrillCSVReader.get_is_option(row['Description 2'])

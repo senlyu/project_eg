@@ -12,7 +12,7 @@ class FidelityCSVReader(CSVReader):
 
     def load(self, source = SourceEnum.FIDELITY) -> List:
         Logging.log(f"fidelity CSV reader start to read {self.file_path}")
-        df = pd.read_csv(self.file_path, header=2, on_bad_lines='skip').dropna(how="all") # remove first 2 empty rows
+        df = pd.read_csv(self.file_path, on_bad_lines='skip').dropna(how="all")
         Logging.log(f"load from {self.file_path}: {len(df)} rows")
 
         total = []
