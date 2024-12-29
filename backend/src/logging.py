@@ -33,8 +33,6 @@ class Logging:
         mode = os.getenv("MODE")
         time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        if mode == "prod":
-            return 
         
         if log_mode == "log_file":
             with open("log.txt", "a") as f:
