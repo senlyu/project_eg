@@ -63,4 +63,4 @@ class GainRecord:
         return str(year) + "Q" + str(quarter)
 
     def __repr__(self):
-        return f"GainRecord(processing_gains={self.processing_gains}, close_transaction={self.close_transaction}), gain={self.gain}, tax_year={self.tax_year}, tax_quarter={self.tax_quarter}"
+        return f"GainRecord(processing_gains={self.processing_gains}, close_transaction={self.close_transaction}), gain={self.gain}, short={self.short_gain}, long={self.long_gain}, tax_year={self.tax_year}, tax_quarter={self.tax_quarter}"
