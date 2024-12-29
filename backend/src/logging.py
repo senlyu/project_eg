@@ -43,6 +43,8 @@ class Logging:
                 f.write(s)
                 f.write("\n")
         else:
+            if mode == "prod":
+                return 
             print(time + ": ", *args, **kwargs)
 
     @staticmethod
