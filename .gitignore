@@ -1,5 +1,6 @@
 /data/*
 log.txt
+report.txt
 /test_data/**
 !/test_data/robinhood/
 !/test_data/merrill/

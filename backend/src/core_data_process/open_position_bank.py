@@ -18,6 +18,12 @@ class OpenPositionBank:
     def get_all_tickers(self):
         return self.by_ticker.keys()
 
+    def get_all_tickers_by_source(self, source):
+        tickers = set()
+        for o in self.by_source[source]:
+            tickers.add(o.open_transaction.ticker)
+        return tickers
+
     def remove_open_record(self, open_record, source):
         self.all.remove(open_record)
         self.by_source[source].remove(open_record)

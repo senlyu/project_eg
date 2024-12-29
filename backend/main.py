@@ -35,6 +35,9 @@ def main(
     quarterly_estimated_gain_all = gain_records_bank.by_quarter
     Logging.log(yearly_estimated_gain_all)
     Logging.log(quarterly_estimated_gain_all)
+
+    gain_records_bank.report_by_quarter_summary()
+    gain_records_bank.report_by_year_summary()
             
 if __name__ == "__main__":
     Logging.clean()

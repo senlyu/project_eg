@@ -16,6 +16,7 @@ class GainRecord:
         self.gain = GainRecord.cal_gain(processing_gains, close_transaction)
         self.tax_year = GainRecord.get_tax_year(close_transaction)
         self.tax_quarter = GainRecord.get_tax_quarter(close_transaction)
+        self.short_gain, self.long_gain = GainRecord.cal_gain_by_type(processing_gains, close_transaction)
 
     @staticmethod
     def cal_gain(processing_gains, close_transaction):
@@ -27,7 +28,29 @@ class GainRecord:
             volumn = r.remain_volumn
             cost += price * volumn
         
-        return revenue - cost
+        return round((revenue - cost) * ( 100 if close_transaction.is_option else 1 ), 2)
+
+    @staticmethod
+    def cal_gain_by_type(processing_gains, close_transaction):
+
+        short, long = 0, 0
+        for r in processing_gains:
+            open_price = r.open_transaction.price
+            close_price = close_transaction.price
+            volumn = r.remain_volumn
+            revenue = (close_price - open_price) * volumn
+
+            open_date = r.open_transaction.date
+            close_data = close_transaction.date
+            days = abs((close_data - open_date).days)
+            if (days > 365):
+                # long
+                long += revenue
+            else:
+                # short
+                short += revenue
+
+        return round(short * ( 100 if close_transaction.is_option else 1 ), 2), round(long * ( 100 if close_transaction.is_option else 1 ), 2)
 
     @staticmethod
     def get_tax_year(close_transaction):
@@ -40,4 +63,4 @@ class GainRecord:
         return str(year) + "Q" + str(quarter)
 
     def __repr__(self):
-        return f"GainRecord(processing_gains={self.processing_gains}, close_transaction={self.close_transaction}), gain={self.gain}, tax_year={self.tax_year}, tax_quarter={self.tax_quarter}"
+        return f"GainRecord(processing_gains={self.processing_gains}, close_transaction={self.close_transaction}), gain={self.gain}, short={self.short_gain}, long={self.long_gain}, tax_year={self.tax_year}, tax_quarter={self.tax_quarter}"

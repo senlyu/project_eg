@@ -1,1 +1,1 @@
-PIPENV_VERBOSITY=-1 MODE=prod pipenv run python3 backend/main.py
+PIPENV_VERBOSITY=-1 MODE=prod LOG_MODE=log_file pipenv run python3 backend/main.py
