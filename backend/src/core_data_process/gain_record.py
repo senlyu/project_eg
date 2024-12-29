@@ -27,7 +27,7 @@ class GainRecord:
             volumn = r.remain_volumn
             cost += price * volumn
         
-        return revenue - cost
+        return (revenue - cost) * ( 100 if close_transaction.is_option else 1 )
 
     @staticmethod
     def get_tax_year(close_transaction):
