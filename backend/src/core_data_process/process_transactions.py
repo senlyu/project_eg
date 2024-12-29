@@ -66,6 +66,7 @@ class ProcessTransactions:
 
     @staticmethod
     def process_open_positioins_to_close(open_records, close_transaction):
+        open_records = sorted(open_records, key=lambda x: x.open_transaction.date)
 
         target_v = close_transaction.volumn
         new_gain_record = None
