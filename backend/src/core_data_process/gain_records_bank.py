@@ -45,7 +45,7 @@ class GainRecordsBank:
             for g in gain_records:
                 short += g.short_gain
                 long += g.long_gain
-            Logging.log(quarter, short, long)
+            Logging.log(quarter, ", short: ", round(short, 2), ", long: ", round(long, 2))
         Logging.log("-" * 10 + " gain records bank by quarter summary finished" + "-" * 10)
 
         
