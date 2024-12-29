@@ -40,11 +40,12 @@ class GainRecordsBank:
 
     def logging_by_quarter_summary(self):
         Logging.log("-" * 10 + " gain records bank by quarter summary" + "-" * 10)
-        for quarter, gain_records in self.by_quarter.items():
-            summary = 0
+        for quarter, gain_records in sorted(self.by_quarter.items()):
+            short, long = 0, 0
             for g in gain_records:
-                summary += g.gain
-            Logging.log(quarter, summary)
+                short += g.short_gain
+                long += g.long_gain
+            Logging.log(quarter, short, long)
         Logging.log("-" * 10 + " gain records bank by quarter summary finished" + "-" * 10)
 
         
