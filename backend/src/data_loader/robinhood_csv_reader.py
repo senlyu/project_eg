@@ -12,7 +12,7 @@ class RobinhoodCSVReader(CSVReader):
 
     def load(self, source = SourceEnum.ROBINHOOD) -> List:
         Logging.log(f"robinhood CSV reader start to read {self.file_path}")
-        df = pd.read_csv(self.file_path)
+        df = pd.read_csv(self.file_path, on_bad_lines='skip')
         filtered = df.loc[df["Trans Code"].isin(["BTO","STC","Buy","Sell"])]
         Logging.log(f"load from {self.file_path}: {len(filtered)} rows")
 

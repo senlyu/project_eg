@@ -12,7 +12,7 @@ class MerrillCSVReader(CSVReader):
 
     def load(self, source = SourceEnum.MERRILL) -> List:
         Logging.log(f"merrill CSV reader start to read {self.file_path}")
-        df = pd.read_csv(self.file_path)
+        df = pd.read_csv(self.file_path, on_bad_lines='skip')
         filtered = df.loc[df["Description 1 "].isin(["Sale ","Purchase "])]
         Logging.log(f"load from {self.file_path}: {len(filtered)} rows")
 
