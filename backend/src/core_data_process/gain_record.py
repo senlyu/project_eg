@@ -38,7 +38,7 @@ class GainRecord:
             open_price = r.open_transaction.price
             close_price = close_transaction.price
             volumn = r.remain_volumn
-            revenue = (close_price - open_price) * volumn
+            revenue = round(close_price - open_price, 2) * volumn
 
             open_date = r.open_transaction.date
             close_data = close_transaction.date
