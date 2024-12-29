@@ -1,7 +1,19 @@
 # project_eg
 
 
-dev must read:
+## Intro
+This is a self served project, aim to support financial data analysis from multiple broker transactions. 
+
+Current it support offline activity reports reading from 3 platforms (robinhood, fidelity, merrill) 
+
+And provide a basic report in command line
+
+## Next support
+
+1. UI support
+2. Holding analysis
+
+## dev must read:
 
 1. support pipenv: pipenv install
 2. python 3.8
