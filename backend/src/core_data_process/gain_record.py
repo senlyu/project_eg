@@ -28,7 +28,7 @@ class GainRecord:
             volumn = r.remain_volumn
             cost += price * volumn
         
-        return (revenue - cost) * ( 100 if close_transaction.is_option else 1 )
+        return round((revenue - cost) * ( 100 if close_transaction.is_option else 1 ), 2)
 
     @staticmethod
     def cal_gain_by_type(processing_gains, close_transaction):
@@ -38,7 +38,7 @@ class GainRecord:
             open_price = r.open_transaction.price
             close_price = close_transaction.price
             volumn = r.remain_volumn
-            revenue = round(close_price - open_price, 2) * volumn
+            revenue = (close_price - open_price) * volumn
 
             open_date = r.open_transaction.date
             close_data = close_transaction.date
@@ -50,7 +50,7 @@ class GainRecord:
                 # short
                 short += revenue
 
-        return short * ( 100 if close_transaction.is_option else 1 ), long * ( 100 if close_transaction.is_option else 1 )
+        return round(short * ( 100 if close_transaction.is_option else 1 ), 2), round(long * ( 100 if close_transaction.is_option else 1 ), 2)
 
     @staticmethod
     def get_tax_year(close_transaction):
