@@ -64,4 +64,4 @@ if __name__ == "__main__":
     mode = os.getenv("MODE")
     # main(test_mode=(mode == "test"))
     market_data = init_market_data_from_config()
-    print(market_data.get_previous_close("AAPL"))
+    print(float(market_data.get_previous_close("AAPL")))

@@ -16,7 +16,7 @@ class LocalStorage:
             lines = []
         else:
             with open(self.storage_path, 'r', encoding="utf-8") as f:
-                lines = [(date, ticker, price) for id, ticker, price in [line.split('|') for line in f.readlines()]]
+                lines = [(date, ticker, price) for date, ticker, price in [line.rstrip().split('|') for line in f.readlines()]]
                 f.close()
 
         self.build_data(lines)
@@ -31,7 +31,7 @@ class LocalStorage:
                 self.data[date] = {}
             self.data[date][ticker] = price
 
-    def get_price(self, ticker, date):
+    def get_price(self, date, ticker):
         if date in self.data and ticker in self.data[date]:
             return self.data[date][ticker]
         return None
@@ -40,3 +40,9 @@ class LocalStorage:
         if date not in self.data:
             self.data[date] = {}
         self.data[date][ticker] = price
+        self.save(date, ticker, price)
+
+    def save(self, date, ticker, price):
+        with open(self.storage_path, 'a', encoding="utf-8") as f:
+            f.write(f"{date}|{ticker}|{price}\n")
+            f.close()

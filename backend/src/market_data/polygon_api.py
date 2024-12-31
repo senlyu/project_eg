@@ -6,6 +6,7 @@ class PolygonAPI:
         self.clients = [RESTClient(api_key=api_key) for api_key in api_keys]
 
     def get_previous_close(self, ticker):
+        print(f"query for {ticker}")
         client = self.clients[0]
         aggs = client.get_previous_close_agg(ticker)
         return aggs[0].close
