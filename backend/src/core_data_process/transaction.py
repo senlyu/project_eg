@@ -50,7 +50,7 @@ class Transcation:
     ):
         if is_option:
             parsed_date = datetime.strftime(option_date, "%y%m%d")
-            return symbol + parsed_date + option_type.value + str(int(strike_price * 1000)).zfill(8)
+            return symbol + parsed_date + option_type.value[0] + str(int(strike_price * 1000)).zfill(8)
         else:
             return symbol
 

@@ -8,6 +8,8 @@ pandas = "*"
 pylint = "*"
 importlib-metadata = "*"
 numpy = "*"
+polygon-api-client = "*"
+pytz = "*"
 
 [dev-packages]
 

@@ -28,7 +28,7 @@ class FidelityCSVReader(CSVReader):
     def process_one_row(row, source):
         try:
             date = datetime.strptime(row['Run Date'].lstrip(), "%m/%d/%Y")
-            symbol = row['Symbol']
+            symbol = row['Symbol'].lstrip()
             if not FidelityCSVReader.get_is_stock_option(symbol):
                 return None
             action = FidelityCSVReader.get_action(row['Action'])

@@ -26,8 +26,6 @@ class Logging:
         if mode == "log_file":
             with open("log.txt", "a") as f:
                 f.truncate(0)
-            with open("report.txt", "a") as f:
-                f.truncate(0)
 
     @staticmethod
     def log(*args, **kwargs):
@@ -45,20 +43,6 @@ class Logging:
         else:
             if mode == "prod":
                 return 
-            print(time + ": ", *args, **kwargs)
-
-    @staticmethod
-    def report(*args, **kwargs):
-        log_mode = os.getenv("LOG_MODE") or "default"
-        mode = os.getenv("MODE")
-        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        if log_mode == "log_file":
-            with open("report.txt", "a") as f:
-                s = time + ": " + (" ").join(str(arg) for arg in args)
-                s = s + (" ").join(str(f"{k}: {v}") for k, v in kwargs.items())
-                f.write(s)
-                f.write("\n")
-        else:
             print(time + ": ", *args, **kwargs)
 
     @staticmethod
