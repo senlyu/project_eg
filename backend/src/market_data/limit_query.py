@@ -32,8 +32,6 @@ class LimitQuery:
         if position == (None, None):
             return
 
-        print(f"find position: {position} is empty")
-
         if len(self.waiting) == 0:
             return
         next = self.waiting.pop(0)

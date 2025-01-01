@@ -12,10 +12,10 @@ class PolygonAPIClosePrice(PolygonAPIBase, LimitQuery):
 
     def query(self, ticker):
         try:
-            print(f"query for {ticker}")
+            Logging.log(f"query for {ticker}")
             client = self.clients[0]
             aggs = client.get_previous_close_agg(ticker)
             Logging.log(aggs)
             return aggs[0].close
         except Exception as e:
-            print(e)
+            Logging.log(e)
