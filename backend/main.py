@@ -7,10 +7,11 @@ from src.core_data_process.gain_records_bank import GainRecordsBank
 from src.core_data_process.open_position_bank import OpenPositionBank
 from src.core_data_process.close_position_bank import ClosePositionBank
 from src.logging import Logging
-from src.market_data.polygon_api import PolygonAPI
+from src.market_data.polygon_apis.previous_close import PolygonAPIClosePrice
 from src.market_data.local_storage import LocalStorage
-from src.market_data.market_data import MarketData
+from src.market_data.market_data import MarketDataWithPolygon
 import json
+import asyncio
 
 def main(
     test_mode: bool,
@@ -43,19 +44,25 @@ def main(
     gain_records_bank.report_by_quarter_summary()
     gain_records_bank.report_by_year_summary()
             
-def init_market_data_from_config():
+def init_market_data_with_polygon_from_config():
     with open('config.json', 'r') as f:
         config = json.load(f)
 
     polygon = config.get('polygon')
-    polygon_api_keys = polygon.get('api_keys')
-    query = PolygonAPI(polygon_api_keys)
 
     local_storage = config.get('local_storage')
     storage_path = local_storage.get('path')
     storage = LocalStorage(storage_path)
 
-    return MarketData(storage, query)
+    return MarketDataWithPolygon(storage, polygon)
+
+async def test_multiple(market_data):
+    t = []
+    for i in range(10):
+        t.append(await market_data.get_previous_close("AAPL"))
+    print(t)
+    results = await asyncio.gather(*t)
+    print(results)
 
 
 if __name__ == "__main__":
@@ -63,5 +70,6 @@ if __name__ == "__main__":
     Logging.start()
     mode = os.getenv("MODE")
     # main(test_mode=(mode == "test"))
-    market_data = init_market_data_from_config()
-    print(float(market_data.get_previous_close("AAPL")))
+    market_data = init_market_data_with_polygon_from_config()
+
+    asyncio.run(test_multiple(market_data))
