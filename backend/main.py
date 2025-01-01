@@ -71,20 +71,8 @@ def init_reports_from_config():
     return (TaxReport(base_path), HoldingReporting(base_path))
 
 
-# async def test_multiple(market_data):
-#     t = []
-#     for i in range(10):
-#         t.append(await market_data.get_previous_close("AAPL"))
-#     print(t)
-#     results = await asyncio.gather(*t)
-#     print(results)
-
-
 if __name__ == "__main__":
     Logging.clean()
     Logging.start()
     mode = os.getenv("MODE")
     main(test_mode=(mode == "test"))
-    # market_data = init_market_data_with_polygon_from_config()
-
-    # asyncio.run(test_multiple(market_data))

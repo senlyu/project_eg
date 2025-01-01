@@ -20,7 +20,6 @@ class HoldingReporting(ReportingBase):
     def report_by_all_holding(self, open_position_bank, market_data):
         self.report("-" * 10 + " open postions for all holding" + "-" * 10)
         all_tickers = open_position_bank.by_ticker.keys()
-        self.report(all_tickers)
 
         reform = []
         for t in all_tickers:
@@ -28,8 +27,20 @@ class HoldingReporting(ReportingBase):
                 reform.append("O:"+t)
             else:
                 reform.append(t)
-        self.report(reform)
         
-        self.report(market_data.get_previous_close(reform))
+        all_prices = market_data.get_previous_close(reform)
+
+        total_volume = {}
+        for key, value in open_position_bank.by_ticker.items():
+            all_opens_for_one_ticker = value
+            total_volume[key] = 0
+            for op in all_opens_for_one_ticker:
+                total_volume[key] += op.remain_volumn
+
+        for ticker, volume in total_volume.items():
+            is_option = any(char.isdigit() for char in ticker)
+            price = all_prices[ticker] * 100.0 if is_option else 1
+            self.report(ticker, volume * all_prices[ticker])
+
         
         self.report("-" * 10 + " open postions for all holding finished" + "-" * 10)

@@ -32,8 +32,8 @@ class MarketDataBase:
 
         res = {}
         for i in range(len(tickers)):
-            res[tickers[i]] = t[i].result()
-        print(res)
+            ticker = tickers[i][2:] if tickers[i].startswith("O:") else tickers[i]
+            res[ticker] = round(float(t[i].result()), 2)
         return res
 
     def get_previous_close(self, tickers):
