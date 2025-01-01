@@ -1,4 +1,5 @@
 import asyncio
+from src.logging import Logging
 
 class LimitQuery:
     def __init__(self, cluster, limit, sleep_time):
@@ -33,14 +34,20 @@ class LimitQuery:
 
         print(f"find position: {position} is empty")
 
+        if len(self.waiting) == 0:
+            return
         next = self.waiting.pop(0)
 
         self.execution[position[0]][position[1]] = next
         asyncio.create_task(self.run(position, *next))
     
     async def run(self, position, future, args, kwargs):
-        value = self.query(*args, **kwargs)
-        future.set_result(value)
+        try:
+            value = self.query(*args, **kwargs)
+            future.set_result(value)
+        except Exception as e:
+            Logging.log(e)
+
         await asyncio.sleep(self.sleep_time)
         self.execution[position[0]][position[1]] = None
         self.start_one_run()

@@ -6,22 +6,40 @@ import asyncio
 class MarketDataBase:
     def __init__(self, storage):
         self.storage = storage
-
-    async def get_previous_close(self, ticker):
         nyc_timezone = pytz.timezone('America/New_York') 
         yesterday = datetime.now(nyc_timezone).date() - timedelta(days=1)
-        yesterday_str = yesterday.strftime("%Y-%m-%d")  
-        close_price = self.storage.get_price(yesterday_str, ticker)
+        self.yesterday_str = yesterday.strftime("%Y-%m-%d")  
+
+
+    async def get_previous_close_for_one_ticker(self, ticker):
+        close_price = self.storage.get_price(self.yesterday_str, ticker)
         if close_price is not None:
             f = asyncio.Future()
             await self.set_future(f, close_price)
             return f
 
+        f = asyncio.Future()
         price = await self.query_previous_close(ticker)
-        self.storage.add_price(yesterday_str, ticker, price)
-        return price
+        self.storage.add_price(self.yesterday_str, ticker, round(price, 2))
+        await self.set_future(f, price)
+        return f
 
-    async def query_previous_close(self, ticker):
+    async def get_previous_close_for_multiple_tickers(self, tickers):
+        t = []
+        for ticker in tickers:
+            t.append(await self.get_previous_close_for_one_ticker(ticker))
+        await asyncio.gather(*t)
+
+        res = {}
+        for i in range(len(tickers)):
+            res[tickers[i]] = t[i].result()
+        print(res)
+        return res
+
+    def get_previous_close(self, tickers):
+        return asyncio.run(self.get_previous_close_for_multiple_tickers(tickers))
+
+    def query_previous_close(self, ticker):
         pass
 
     async def set_future(self, future, value):
@@ -35,6 +53,6 @@ class MarketDataWithPolygon(MarketDataBase):
         polygon_api_keys = polygon_settings.get('api_keys')
         self.query_previous_close_api = PolygonAPIClosePrice(polygon_api_keys, len(polygon_api_keys), 5)
 
-    async def query_previous_close(self, ticker):
+    def query_previous_close(self, ticker):
         return self.query_previous_close_api.query_by_limit(ticker)
 

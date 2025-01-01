@@ -38,25 +38,4 @@ class GainRecordsBank:
             Logging.log(gain_record)
         Logging.log("-" * 10 + " gain records bank finished" + "-" * 10)
 
-    def report_by_quarter_summary(self):
-        Logging.report("-" * 10 + " gain records bank by quarter summary" + "-" * 10)
-        for quarter, gain_records in sorted(self.by_quarter.items()):
-            short, long = 0, 0
-            for g in gain_records:
-                short += g.short_gain
-                long += g.long_gain
-            Logging.report(quarter, ", short: ", round(short, 2), ", long: ", round(long, 2))
-        Logging.report("-" * 10 + " gain records bank by quarter summary finished" + "-" * 10)
-
-    def report_by_year_summary(self):
-        Logging.report("-" * 10 + " gain records bank by yearly summary" + "-" * 10)
-        for quarter, gain_records in sorted(self.by_year.items()):
-            short, long = 0, 0
-            for g in gain_records:
-                short += g.short_gain
-                long += g.long_gain
-            Logging.report(quarter, ", short: ", round(short, 2), ", long: ", round(long, 2))
-            Logging.report(quarter, ", short tax 0.37: ", round(short * 0.37, 2) , ", long tax 0.2: ", round(long * 0.2, 2))
-        Logging.report("-" * 10 + " gain records bank by yearly summary finished" + "-" * 10)
-
         

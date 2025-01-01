@@ -12,6 +12,8 @@ from src.market_data.local_storage import LocalStorage
 from src.market_data.market_data import MarketDataWithPolygon
 import json
 import asyncio
+from src.report.tax import TaxReport
+from src.report.holding import HoldingReporting
 
 def main(
     test_mode: bool,
@@ -41,8 +43,12 @@ def main(
     Logging.log(yearly_estimated_gain_all)
     Logging.log(quarterly_estimated_gain_all)
 
-    gain_records_bank.report_by_quarter_summary()
-    gain_records_bank.report_by_year_summary()
+    (tax_report, holding_report) = init_reports_from_config()
+    tax_report.report_by_quarter_summary(gain_records_bank)
+    tax_report.report_by_year_summary(gain_records_bank)
+
+    holding_report.report_by_all_holding(open_position_bank, init_market_data_with_polygon_from_config())
+
             
 def init_market_data_with_polygon_from_config():
     with open('config.json', 'r') as f:
@@ -56,20 +62,29 @@ def init_market_data_with_polygon_from_config():
 
     return MarketDataWithPolygon(storage, polygon)
 
-async def test_multiple(market_data):
-    t = []
-    for i in range(10):
-        t.append(await market_data.get_previous_close("AAPL"))
-    print(t)
-    results = await asyncio.gather(*t)
-    print(results)
+def init_reports_from_config():
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+
+    base_path = config.get('report_path')
+
+    return (TaxReport(base_path), HoldingReporting(base_path))
+
+
+# async def test_multiple(market_data):
+#     t = []
+#     for i in range(10):
+#         t.append(await market_data.get_previous_close("AAPL"))
+#     print(t)
+#     results = await asyncio.gather(*t)
+#     print(results)
 
 
 if __name__ == "__main__":
     Logging.clean()
     Logging.start()
     mode = os.getenv("MODE")
-    # main(test_mode=(mode == "test"))
-    market_data = init_market_data_with_polygon_from_config()
+    main(test_mode=(mode == "test"))
+    # market_data = init_market_data_with_polygon_from_config()
 
-    asyncio.run(test_multiple(market_data))
+    # asyncio.run(test_multiple(market_data))

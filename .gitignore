@@ -8,3 +8,4 @@ report.txt
 !/test_data/**/eg_standard*.csv
 config.json
 /local_storage/
+/reporting/
