@@ -40,8 +40,7 @@ class HoldingReporting(ReportingBase):
         for ticker, volume in total_volume.items():
             is_option = any(char.isdigit() for char in ticker)
             price = all_prices[ticker] * (100.0 if is_option else 1)
-            print(is_option, ticker, price, volume)
-            self.report(ticker, volume * all_prices[ticker])
+            self.report(ticker, volume * price)
 
         
         self.report("-" * 10 + " open postions for all holding finished" + "-" * 10)
