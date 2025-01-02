@@ -44,6 +44,7 @@ def main(
     Logging.log(quarterly_estimated_gain_all)
 
     (tax_report, holding_report) = init_reports_from_config()
+    tax_report.report_all_summary(gain_records_bank)
     tax_report.report_by_quarter_summary(gain_records_bank)
     tax_report.report_by_year_summary(gain_records_bank)
 
