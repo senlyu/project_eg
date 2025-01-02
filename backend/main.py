@@ -48,6 +48,7 @@ def main(
     tax_report.report_by_year_summary(gain_records_bank)
 
     holding_report.report_by_all_holding(open_position_bank, init_market_data_with_polygon_from_config())
+    holding_report.report_by_group_holding(open_position_bank, init_market_data_with_polygon_from_config())
 
             
 def init_market_data_with_polygon_from_config():

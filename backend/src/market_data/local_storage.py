@@ -5,6 +5,7 @@ import json
 class LocalStorage:
     def __init__(self, storage_path):
         self.storage_path = storage_path
+        os.makedirs(os.path.dirname(storage_path), exist_ok=True)
         self.data = {}
         self.load()
 

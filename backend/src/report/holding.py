@@ -2,6 +2,8 @@ import os
 from datetime import datetime
 from src.report.base import ReportingBase
 import asyncio
+import json
+from src.market_data.grouping import Grouping
 
 
 class HoldingReporting(ReportingBase):
@@ -17,30 +19,68 @@ class HoldingReporting(ReportingBase):
     def get_market_data_api(self):
         return init_market_data_with_polygon_from_config()
 
-    def report_by_all_holding(self, open_position_bank, market_data):
-        self.report("-" * 10 + " open postions for all holding" + "-" * 10)
-        all_tickers = open_position_bank.by_ticker.keys()
-
-        reform = []
-        for t in all_tickers:
-            if any(char.isdigit() for char in t):
-                reform.append("O:"+t)
-            else:
-                reform.append(t)
-        
-        all_prices = market_data.get_previous_close(reform)
-
-        total_volume = {}
-        for key, value in open_position_bank.by_ticker.items():
-            all_opens_for_one_ticker = value
-            total_volume[key] = 0
-            for op in all_opens_for_one_ticker:
-                total_volume[key] += op.remain_volumn
-
+    def get_total_asset_with_ticker(self, total_volume, all_prices):
+        total_asset_value = 0
+        all_values = []
         for ticker, volume in total_volume.items():
             is_option = any(char.isdigit() for char in ticker)
             price = all_prices[ticker] * (100.0 if is_option else 1)
-            self.report(ticker, round(volume * price, 2))
+            asset_value = round(volume * price, 2)
+            total_asset_value += asset_value
+            all_values.append((ticker, asset_value))
 
-        
+        return total_asset_value, all_values
+
+    def get_total_asset_summary(self, open_position_bank, market_data):
+        all_tickers = list(open_position_bank.by_ticker.keys())
+        all_prices = market_data.get_previous_close(all_tickers)
+        total_volume = open_position_bank.get_total_volume_with_ticker()
+        return self.get_total_asset_with_ticker(total_volume, all_prices)
+
+
+    def report_by_all_holding(self, open_position_bank, market_data):
+        self.report("-" * 10 + " open postions for all holding" + "-" * 10)
+        ( total_asset_value, all_values) = self.get_total_asset_summary(open_position_bank, market_data)
+
+        # all values
+        for (ticker, asset_value) in all_values:
+            self.report(f"{ticker}: {asset_value}, percentage: {asset_value/total_asset_value*100:.2f}%")
+
         self.report("-" * 10 + " open postions for all holding finished" + "-" * 10)
+
+    def load_grouping(self):
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+
+        path = config.get('grouping')
+        return Grouping(path).data
+
+    def report_by_group_holding(self, open_position_bank, market_data):
+        self.report("-" * 10 + " open postions for groups" + "-" * 10)
+        ( total_asset_value, all_values) = self.get_total_asset_summary(open_position_bank, market_data)
+        groups = self.load_grouping()
+
+        for group in groups:
+            # report group name, group tickers, total asset value, percentage
+            group_name = list(group.keys())[0]
+            group_tickers = group[group_name]
+
+            group_assets = []
+            for ticker, asset_value in all_values:
+                for item in group_tickers:
+                    if ticker.startswith(item) or ticker == item:
+                        group_assets.append((ticker, asset_value))
+                        break
+
+            total_group_asset_value = 0
+            for item in group_assets:
+                total_group_asset_value += item[1]
+            total_group_asset_value_percentage = total_group_asset_value/total_asset_value*100
+
+            self.report(f"{group_name}: {total_group_asset_value}, percentage: {total_group_asset_value_percentage:.2f}%")
+            self.report("-" * 5)
+            for item in group_assets:
+                self.report(f"{item[0]}: {item[1]}, percentage: {item[1]/total_group_asset_value*100:.2f}%")
+            self.report("-" * 5)
+
+        self.report("-" * 10 + " open postions for groups finished" + "-" * 10)
