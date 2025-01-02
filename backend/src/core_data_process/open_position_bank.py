@@ -48,4 +48,13 @@ class OpenPositionBank:
             self.by_source[source] = self.by_source.get(source, []) + other.by_source[source]
         for ticker in other.by_ticker:
             self.by_ticker[ticker] = self.by_ticker.get(ticker, []) + other.by_ticker[ticker]
+
+    def get_total_volume_with_ticker(self):
+        total_volume = {}
+        for key, value in self.by_ticker.items():
+            all_opens_for_one_ticker = value
+            total_volume[key] = 0
+            for op in all_opens_for_one_ticker:
+                total_volume[key] += op.remain_volumn
+        return total_volume
         
