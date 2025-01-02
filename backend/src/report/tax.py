@@ -16,7 +16,7 @@ class TaxReport(ReportingBase):
     def report_all_summary(self, gain_records_bank):
         self.report("-" * 10 + " gain records bank alll" + "-" * 10)
         for g in sorted(gain_records_bank.all, key=lambda x: x.close_transaction.date, reverse=True):
-            self.report(f"{g.close_transaction.date.date()}: {g.close_transaction.ticker}: total gain: {g.gain}, short gain: {g.short_gain}, long gain: {g.long_gain}, tax year: {g.tax_year}, tax quarter: {g.tax_quarter}, roi: {g.roi}")
+            self.report(f"{g.close_transaction.date.date()}: {g.close_transaction.ticker}: total gain: {g.gain}, short gain: {g.short_gain}, long gain: {g.long_gain}, tax year: {g.tax_year}, tax quarter: {g.tax_quarter}, roi: {round(g.roi * 100, 2)}%")
         self.report("-" * 10 + " gain records bank all finished" + "-" * 10)
 
     def report_by_quarter_summary(self, gain_records_bank):
