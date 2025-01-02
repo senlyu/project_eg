@@ -80,7 +80,7 @@ class GainRecord:
             total_revenue += revenue
             total_cost += open_price * volumn
 
-        return revenue * 1.0 / total_cost 
+        return total_revenue * 1.0 / total_cost 
 
     def __repr__(self):
         return f"GainRecord(processing_gains={self.processing_gains}, close_transaction={self.close_transaction}), gain={self.gain}, short={self.short_gain}, long={self.long_gain}, tax_year={self.tax_year}, tax_quarter={self.tax_quarter}"
