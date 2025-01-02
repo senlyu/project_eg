@@ -79,7 +79,7 @@ class HoldingReporting(ReportingBase):
 
             self.report(f"{group_name}: {total_group_asset_value}, percentage: {total_group_asset_value_percentage:.2f}%")
             self.report("-" * 5)
-            for item in group_assets:
+            for item in sorted(group_assets, key=lambda x: x[1], reverse=True):
                 self.report(f"{item[0]}: {item[1]}, percentage: {item[1]/total_group_asset_value*100:.2f}%")
             self.report("-" * 5)
 
