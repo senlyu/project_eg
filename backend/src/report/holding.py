@@ -43,7 +43,7 @@ class HoldingReporting(ReportingBase):
         ( total_asset_value, all_values) = self.get_total_asset_summary(open_position_bank, market_data)
 
         # all values
-        for (ticker, asset_value) in all_values:
+        for (ticker, asset_value) in sorted(all_values, key=lambda x: x[1], reverse=True):
             self.report(f"{ticker}: {asset_value}, percentage: {asset_value/total_asset_value*100:.2f}%")
 
         self.report("-" * 10 + " open postions for all holding finished" + "-" * 10)
