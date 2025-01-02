@@ -2,6 +2,8 @@ import os
 from datetime import datetime
 from src.report.base import ReportingBase
 import asyncio
+import json
+from src.market_data.grouping import Grouping
 
 
 class HoldingReporting(ReportingBase):
@@ -46,8 +48,39 @@ class HoldingReporting(ReportingBase):
 
         self.report("-" * 10 + " open postions for all holding finished" + "-" * 10)
 
+    def load_grouping(self):
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+
+        path = config.get('grouping')
+        return Grouping(path).data
+
     def report_by_group_holding(self, open_position_bank, market_data):
         self.report("-" * 10 + " open postions for groups" + "-" * 10)
         ( total_asset_value, all_values) = self.get_total_asset_summary(open_position_bank, market_data)
+        groups = self.load_grouping()
+
+        for group in groups:
+            # report group name, group tickers, total asset value, percentage
+            group_name = list(group.keys())[0]
+            group_tickers = group[group_name]
+
+            group_assets = []
+            for ticker, asset_value in all_values:
+                for item in group_tickers:
+                    if ticker.startswith(item) or ticker == item:
+                        group_assets.append((ticker, asset_value))
+                        break
+
+            total_group_asset_value = 0
+            for item in group_assets:
+                total_group_asset_value += item[1]
+            total_group_asset_value_percentage = total_group_asset_value/total_asset_value*100
+
+            self.report(f"{group_name}: {total_group_asset_value}, percentage: {total_group_asset_value_percentage:.2f}%")
+            self.report("-" * 5)
+            for item in group_assets:
+                self.report(f"{item[0]}: {item[1]}, percentage: {item[1]/total_group_asset_value*100:.2f}%")
+            self.report("-" * 5)
 
         self.report("-" * 10 + " open postions for groups finished" + "-" * 10)
