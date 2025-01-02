@@ -17,6 +17,7 @@ class GainRecord:
         self.tax_year = GainRecord.get_tax_year(close_transaction)
         self.tax_quarter = GainRecord.get_tax_quarter(close_transaction)
         self.short_gain, self.long_gain = GainRecord.cal_gain_by_type(processing_gains, close_transaction)
+        self.roi = GainRecord.cal_roi(processing_gains, close_transaction)
 
     @staticmethod
     def cal_gain(processing_gains, close_transaction):
@@ -61,6 +62,25 @@ class GainRecord:
         year = close_transaction.date.year
         quarter = (close_transaction.date.month - 1) // 3 + 1
         return str(year) + "Q" + str(quarter)
+
+    @staticmethod
+    def cal_roi(processing_gains, close_transaction):
+
+        total_revenue = 0
+        total_cost = 0
+        for r in processing_gains:
+            open_price = r.open_transaction.price
+            close_price = close_transaction.price
+            volumn = r.remain_volumn
+            revenue = (close_price - open_price) * volumn
+
+            open_date = r.open_transaction.date
+            close_data = close_transaction.date
+            days = abs((close_data - open_date).days)
+            total_revenue += revenue
+            total_cost += open_price * volumn
+
+        return revenue * 1.0 / total_cost 
 
     def __repr__(self):
         return f"GainRecord(processing_gains={self.processing_gains}, close_transaction={self.close_transaction}), gain={self.gain}, short={self.short_gain}, long={self.long_gain}, tax_year={self.tax_year}, tax_quarter={self.tax_quarter}"

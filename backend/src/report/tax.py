@@ -13,6 +13,12 @@ class TaxReport(ReportingBase):
         time = datetime.now().strftime("%Y-%m-%d")
         super().__init__(self.file_path, "tax_"+time)
 
+    def report_all_summary(self, gain_records_bank):
+        self.report("-" * 10 + " gain records bank alll" + "-" * 10)
+        for g in sorted(gain_records_bank.all, key=lambda x: x.close_transaction.date, reverse=True):
+            self.report(f"{g.close_transaction.date.date()}: {g.close_transaction.ticker}: total gain: {g.gain}, short gain: {g.short_gain}, long gain: {g.long_gain}, tax year: {g.tax_year}, tax quarter: {g.tax_quarter}, roi: {g.roi}")
+        self.report("-" * 10 + " gain records bank all finished" + "-" * 10)
+
     def report_by_quarter_summary(self, gain_records_bank):
         self.report("-" * 10 + " gain records bank by quarter summary" + "-" * 10)
         for quarter, gain_records in sorted(gain_records_bank.by_quarter.items()):
